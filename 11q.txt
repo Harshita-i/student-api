@@ -98,3 +98,9 @@ Create a new request in Postman:
 •	Method: GET
 •	URL: http://localhost:30081/students
 •	Click Send.
+
+If NodePort access does not work on your Docker Desktop cluster, run this command in another terminal:
+kubectl port-forward service/student-microservice-service 3001:3000
+
+
+Then use http://localhost:3001/students in Postman.

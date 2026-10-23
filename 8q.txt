@@ -31,7 +31,8 @@ docker ps
 You should see nginx-container with a port mapping similar to 8080->80.
 Step 6: Test the application
 Open this link in your browser:
-http://localhost:8080You should see the Nginx welcome page.
+http://localhost:8080   
+You should see the Nginx welcome page.
 
 If the container name is already in use from an earlier attempt, remove the old container before repeating Step 4:
 docker rm -f nginx-container

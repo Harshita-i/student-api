@@ -1,0 +1,29 @@
+Command	
+docker --version	
+docker info
+docker build -t student-api .	
+docker images	
+docker run -d -p 3000:3000 --name student-api-container student-api	
+docker ps	
+docker logs student-api-container	
+docker stop student-api-container	
+docker start student-api-container
+
+Dockerfile:
+
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY server.js .
+
+EXPOSE 3000
+
+CMD ["node", "server.js"]
+
+
+server.js

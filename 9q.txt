@@ -1,0 +1,67 @@
+To create a PostgreSQL container, pull the latest traefik/whoami Docker image, run two containers on different ports, and compare their responses using curl.
+Task 1: Create a PostgreSQL container
+
+Step 1: Start Docker Desktop
+Open Docker Desktop and wait until the Docker engine is running.
+Check it in the VS Code terminal:
+docker --version
+docker info
+
+Step 2: Pull the traefik/whoami image
+docker pull traefik/whoami:latest
+Purpose: Downloads the specified image from Docker Hub. An image is a template used to create containers.
+Verify the downloaded image:
+docker images
+Look for traefik/whoami with the latest tag.
+
+Step 3: Create the PostgreSQL container
+docker run -d --name MyPostgresContainer -e POSTGRES_PASSWORD=abcd1234 -p 8844:5432 postgres:latest
+Purpose: Creates and starts a PostgreSQL database container.
+
+Step 4: Verify the PostgreSQL container
+docker ps
+Expected: The output should list MyPostgresContainer with a port mapping containing 8844->5432.
+Check startup logs:
+docker logs MyPostgresContainer
+Wait until PostgreSQL reports that it is ready to accept connections.
+
+Task 2: Run two containers on ports 8686 and 8787
+
+Step 5: Create the first container
+docker run -d --name whoami1 -p 8686:80 traefik/whoami:latest
+Purpose: Starts the first whoami web server container.
+•	whoami1 is its name.
+•	8686 is the port on your computer.
+•	80 is the port inside the container.
+
+Step 6: Create the second container
+docker run -d --name whoami2 -p 8787:80 traefik/whoami:latest
+Purpose: Starts another instance of the same image on a different host port.
+•	whoami2 is its name.
+•	8787 is the host port.
+•	80 is the container port.
+
+Step 7: Verify all containers
+docker ps
+
+Open your browser at:
+http://localhost:8686
+
+Purpose: Confirms that the first container is accessible through port 8686.
+
+Step 9: Test the second container
+Open:
+http://localhost:8787
+You should see similar information from the second container.
+Purpose: Confirms that the second container is accessible through port 8787.
+
+Task 3: Use curl to compare responses
+
+Step 10: Send a request to the first container
+In PowerShell, run:
+curl.exe http://localhost:8686
+This sends an HTTP request to the first container and displays its response.
+
+Step 11: Send a request to the second container
+curl.exe http://localhost:8787
+This sends an HTTP request to the second container.

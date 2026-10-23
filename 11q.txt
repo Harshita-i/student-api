@@ -1,0 +1,100 @@
+Step 1: Install dependencies and run the microservice
+
+1.2 Initialize the project (if not already done)
+If you already ran npm init -y and npm install express, skip this part. Otherwise, run:
+npm init -y
+npm install express
+Purpose: These commands create the Node.js project configuration and install Express, which we use to build the API.
+1.3 Start the server
+Run:
+node server.js
+
+
+
+Step 2: Test the API using Postman
+
+Step 3: Create a Dockerfile
+Once local testing works, create a file named Dockerfile in C:\23071A0583\student-microservice.
+Paste and save:
+
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY server.js .
+
+EXPOSE 3000
+
+CMD ["node", "server.js"]
+Purpose: The Dockerfile tells Docker how to package the Node.js application and its dependencies into an image.
+
+
+Step 4: Build the Docker image
+Ensure Docker Desktop is running, then execute:
+docker build -t student-microservice .
+Verify the image:
+docker images
+You should see student-microservice with the latest tag.
+
+Step 5: Create Kubernetes configuration files
+Create deployment.yaml in the same folder:
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: student-microservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: student-microservice
+  template:
+    metadata:
+      labels:
+        app: student-microservice
+    spec:
+      containers:
+        - name: student-microservice
+          image: student-microservice:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+Create service.yaml:
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: student-microservice-service
+spec:
+  type: NodePort
+  selector:
+    app: student-microservice
+  ports:
+    - port: 3000
+      targetPort: 3000
+      nodePort: 30081
+Purpose: The Deployment manages the application pod, and the Service provides an endpoint through which Postman can access it.
+
+
+Step 6: Deploy to Kubernetes
+First check that your Kubernetes cluster is running:
+kubectl get nodes
+Then apply the files:
+kubectl apply -f deployment.yaml
+kubectl apply -f service.yaml
+Check the status:
+kubectl get deployments
+kubectl get pods
+kubectl get services
+Wait until the pod shows Running and the Deployment has one available replica.
+
+
+Step 7: Test through Postman
+Create a new request in Postman:
+•	Method: GET
+•	URL: http://localhost:30081/students
+•	Click Send.

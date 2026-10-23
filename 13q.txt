@@ -1,0 +1,113 @@
+Q13. Write commands for creating Deployments, Services, and Pods in Kubernetes.
+Kubernetes (K8s) is used to deploy, manage, and scale containerized applications.
+Step 1: Create a Deployment
+A Deployment manages Pods and maintains the desired number of running replicas.
+
+Create a file named deployment.yaml in VS Code:
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+        - name: myapp
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+
+
+
+Apply the Deployment:
+kubectl apply -f deployment.yaml
+
+
+Verify:
+kubectl get deployments
+kubectl get pods
+
+
+This creates a Deployment that maintains two Pods running the Nginx container.
+Step 2: Create a Service
+A Service provides a stable way to access the Pods.
+
+Create a file named service.yaml:
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp-service
+spec:
+  type: NodePort
+  selector:
+    app: myapp
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30080
+
+
+
+Apply the Service:
+kubectl apply -f service.yaml
+
+
+Verify:
+kubectl get services
+
+
+The Service exposes the application through NodePort 30080.
+Step 3: Create a Pod directly
+Create a file named pod.yaml:
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp-pod
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+      ports:
+        - containerPort: 80
+
+
+
+Create the Pod:
+kubectl apply -f pod.yaml
+
+
+Verify:
+kubectl get pods
+kubectl describe pod myapp-pod
+
+
+Step 4: Test the application
+If your Kubernetes cluster supports NodePort access, open:
+http://localhost:30080
+
+
+If you are using Docker Desktop Kubernetes, this should normally open the Nginx welcome page. Otherwise, use the appropriate node address for your cluster.
+
+Alternatively, forward the Service port:
+kubectl port-forward service/myapp-service 8080:80
+
+
+Then open http://localhost:8080.
+Step 5: Delete the resources
+kubectl delete -f pod.yaml
+kubectl delete -f service.yaml
+kubectl delete -f deployment.yaml
+
+
+Result
+A Deployment with two Pods, a Service to expose the application, and a standalone Pod are created and verified using Kubernetes commands.

@@ -1,0 +1,117 @@
+
+1\. Download the application image
+
+Docker Hub
+
+2\. Apply the 3 YAML files
+
+Namespace → Deployment → Service
+
+3\. Kubernetes runs the Pod
+
+The Pod contains your application container
+
+4\. Test using Postman
+
+Send a GET request to the application
+
+## Follow these steps in order
+
+### Step 1: Start Docker Desktop
+
+1. Open Docker Desktop.
+2. Wait until Docker is running and Kubernetes is ready.
+3. Open the VS Code terminal and run:
+
+```
+kubectl get nodes
+```
+
+If the node shows `Ready`, continue.
+
+### Step 2: Download the Docker image
+
+Run:
+
+```
+docker pull ssatyab/studentmarkservice
+```
+
+This downloads the application image. Think of the image as the packaged application that Kubernetes will run.
+
+### Step 3: Create a folder for the files
+
+
+
+### Step 4: Download the three YAML files
+
+
+
+### Step 5: Create the namespace
+
+Run this command from the folder containing the files:
+
+```
+kubectl apply -f namespace.yml
+```
+
+What happens? Kubernetes creates the namespace specified in that file. Your lab's namespace is expected to be `studentmarkservice-ns`, assuming the YAML contains that name.
+
+### Step 6: Create the Deployment
+
+Run:
+
+```
+kubectl apply -f deployment.yml
+```
+
+What happens? Kubernetes reads the Deployment file, downloads the image if necessary, and starts the requested Pod or Pods.
+
+### Step 7: Create the Service
+
+Run:
+
+```
+kubectl apply -f service.yml
+```
+
+What happens? Kubernetes creates a Service that directs requests to the application Pods.
+
+The order matters for learning, but `kubectl apply` can create these resources even if you apply the Service before the Deployment. Applying the Deployment first simply makes the process easier to follow.
+
+### Step 8: Check whether everything is running
+
+Run these commands one at a time:
+
+```
+kubectl get pods -n studentmarkservice-ns
+```
+
+```
+kubectl get deployments -n studentmarkservice-ns
+```
+
+```
+kubectl get services -n studentmarkservice-ns
+```
+
+Ideally, the Pod should show `Running` and `1/1` under `READY`, and the Deployment should show its requested replicas as available.
+
+### Step 9: Test using Postman
+
+Now comes the final part of the question.
+
+1. Open Postman.
+2. Select the GET method.
+3. Enter the URL:
+
+   `http://localhost:30081/`
+4. Click Send.
+5. Check the response.
+
+Why port `30081`? Your Kubernetes `service.yml` specifies `nodePort: 30081`. This is the port used to reach the Service through the Kubernetes node when your local Kubernetes setup exposes that NodePort on `localhost`.
+
+If the request fails, don't randomly change the port. First check whether the Pod is running and the Service has an endpoint. Also, the root path `/` might not be a supported API endpoint, so a `404` does not automatically mean Kubernetes failed.
+
+
+

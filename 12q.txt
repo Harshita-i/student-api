@@ -1,0 +1,50 @@
+Step 1: Pull the Docker image
+First, make sure Docker Desktop is running.
+Open your VS Code terminal and execute:
+docker pull jkaninda/simple-api:latest
+Purpose: Downloads the application's Docker image from Docker Hub. Docker Compose will use this image to start the service.
+Verify the image:
+docker images
+Look for jkaninda/simple-api with the latest tag.
+
+
+Step 2: Download the Docker Compose file
+Purpose: A Compose file tells Docker which containers to run and how they connect to each other.
+1.	Open the short URL shown in your lab paper. It appears to be https://shorturl.at/ldlaH; check the capitalization against your paper.
+2.	Download the file named jkaninda-simple-api-docker-compose.
+3.	Create a folder for this experiment, for example:
+C:\23071A0583\simple-api-lab
+4.	Save the downloaded file inside that folder.
+Your folder should look similar to this:
+simple-api-lab
+jkaninda-simple-api-docker-compose
+If Windows adds an extension such as .yml or .yaml, use the actual filename in your terminal command. Make sure it isn't accidentally saved as .txt.
+
+
+Step 3: Open the folder in VS Code
+
+Step 4: Start the application using Docker Compose
+Your lab specifies this command:
+docker compose -f jkaninda-simple-api-docker-compose up -d
+
+If Docker reports that a network named web is missing, the Compose file may require an external network. You can create it with:
+docker network create web
+
+Then repeat the Compose command. If Docker says the network already exists, you can continue.
+
+Step 5: Verify the containers
+Run:
+docker compose -f jkaninda-simple-api-docker-compose ps
+This displays the services managed by that Compose file and their status.
+You can also run:
+docker ps
+Look for the Simple API container and check which host port it uses. The published port depends on the downloaded Compose file; the official image's basic example uses port 8080. 
+ 
+Docker Image
+
+Step 6: Test using Postman
+Open Postman and create a GET request.
+First, test the root endpoint:
+•	Method: GET
+•	URL: http://localhost:8080/
+Click Send

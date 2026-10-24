@@ -1,0 +1,15 @@
+Step 1: Initialize Terraform. 
+& "C:\Terraform\terraform.exe" init 
+
+Step 2: Preview changes. 
+& "C:\Terraform\terraform.exe" plan 
+
+Step 3: Apply the configuration. 
+& "C:\Terraform\terraform.exe" apply 
+When prompted, type yes. 
+
+Step 4: Retrieve the output. 
+& "C:\Terraform\terraform.exe" output 
+
+Step 5: Destroy the resource. 
+& "C:\Terraform\terraform.exe" destroy

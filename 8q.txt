@@ -2,9 +2,8 @@ Step 1: Check Docker
 Open the VS Code terminal and run:
 docker --version
 docker info
-
-
 Make sure Docker Desktop is running.
+
 Step 2: Pull the latest image
 For a simple demonstration, use the official Nginx image:
 docker pull nginx:latest
@@ -14,21 +13,20 @@ docker pull nginx:latest
 - nginx is the application image.
 - latest specifies the image tag named latest.
 Note: latest is a tag, not a guarantee that the image is the newest version by release date.
+
 Step 3: Verify the image
 docker images
-
-
 Look for nginx with the latest tag.
+
+
 Step 4: Run a container from the image
 docker run -d --name nginx-container -p 8080:80 nginx:latest
-
-
 This starts an Nginx container in the background and maps your computer's port 8080 to the container's port 80.
+
 Step 5: Verify the running container
 docker ps
-
-
 You should see nginx-container with a port mapping similar to 8080->80.
+
 Step 6: Test the application
 Open this link in your browser:
 http://localhost:8080   

@@ -1,0 +1,21 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: student-microservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: student-microservice
+  template:
+    metadata:
+      labels:
+        app: student-microservice
+    spec:
+      containers:
+        - name: student-microservice
+          image: student-microservice:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000

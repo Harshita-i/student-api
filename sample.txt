@@ -1,2 +1,0 @@
-hi
-good morning

@@ -1,0 +1,73 @@
+2. Kubernetes Troubleshooting
+Aim: To identify and troubleshoot errors in a Kubernetes Deployment.
+
+We intentionally create a Deployment with an incorrect image name and then fix it.
+Step 1: Create a Deployment
+Create deployment.yaml:
+
+
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: error-deployment
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: error-app
+
+  template:
+    metadata:
+      labels:
+        app: error-app
+
+    spec:
+      containers:
+      - name: nginx
+        image: nginx-invalid
+        ports:
+        - containerPort: 80
+
+
+Here, nginx-invalid is an incorrect image name.
+Step 2: Apply Deployment
+kubectl apply -f deployment.yaml
+
+
+Step 3: Check Pods
+kubectl get pods
+
+
+You may see:
+ImagePullBackOff
+
+
+This means Kubernetes is unable to download the specified image.
+Step 4: Describe the Pod
+kubectl describe pod POD_NAME
+
+
+This shows detailed information about the Pod, including errors and events.
+Step 5: Check Pod logs
+kubectl logs POD_NAME
+
+
+Displays application logs, if the container has started.
+Step 6: Fix the image
+kubectl set image deployment/error-deployment nginx=nginx
+
+
+Now Kubernetes uses the correct Nginx image.
+Step 7: Check the status
+kubectl get pods
+
+
+The Pod should eventually show:
+STATUS: Running
+
+
+Check deployment:
+kubectl get deployments

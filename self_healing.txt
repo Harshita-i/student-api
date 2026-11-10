@@ -1,0 +1,25 @@
+Step 1: Verify the current deployment 
+            kubectl get deployments 
+            kubectl get pods 
+Step 2: Scale to three replicas 
+            kubectl scale deployment student-api --replicas=3 
+            kubectl get pods 
+ 
+Three Student API pods are created and reach Running. 
+Step 3: Demonstrate self-healing 
+Copy the name of one Student API pod: 
+            kubectl get pods 
+Delete that specific pod: 
+            kubectl delete pod YOUR_POD_NAME 
+Check again: 
+            kubectl get pods 
+Kubernetes should create a replacement pod to maintain the desired replica count.
+
+Step 4: Restart the Deployment 
+kubectl rollout restart deployment student-api  
+kubectl rollout status deployment student-api 
+Step 5: Restore one replica 
+kubectl scale deployment student-api --replicas=1 
+kubectl get pods 
+Wait until the terminating pods disappear and one pod remains Running. 
+

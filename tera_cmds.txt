@@ -13,3 +13,66 @@ Step 4: Retrieve the output.
 
 Step 5: Destroy the resource. 
 & "C:\Terraform\terraform.exe" destroy
+
+
+resource "terraform_data" "student_api_lab" {
+  input = "Student API infrastructure lab"
+}
+
+output "lab_message" {
+  value = terraform_data.student_api_lab.output
+}
+
+
+
+Step 2: Initialize Terraform:
+terraform init
+
+
+Step 4: Preview:
+terraform plan
+
+
+Step 5: Apply:
+terraform apply
+
+
+Type yes.
+
+Expected output:
+lab_message = "Student API infrastructure lab"
+
+
+For Experiment 2: State Management
+After applying, inspect the state:
+terraform state list
+
+
+Expected:
+terraform_data.student_api_lab
+
+
+View the resource details:
+terraform state show terraform_data.student_api_lab
+
+
+View the state file:
+Get-Content terraform.tfstate
+
+
+Demonstrate change management
+Change:
+input = "Student API infrastructure lab"
+
+
+to:
+input = "Updated Student API infrastructure lab"
+
+
+Run:
+terraform plan
+terraform apply
+
+terraform state mv	Moves or renames a resource address in state
+terraform state rm	Removes a resource from state tracking
+terraform state pull	Displays the current state

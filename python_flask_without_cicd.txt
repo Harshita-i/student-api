@@ -1,0 +1,12 @@
+apt install -y python3 python3-pip python3-venv git
+
+python3 -m venv venv
+
+Activate it:
+source venv/bin/activate
+
+python app.py
+
+then in other terminal curl localhost link
+
+then normal docekr process

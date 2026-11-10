@@ -1,0 +1,64 @@
+-install Jenkins
+-if not 21 or 25, install adoptium,then go to program files,adoptium..go till hotspot and copy the path in that...next next next finish..
+-localhost:8080 in browser,unlock Jenkins
+-go to file explorer and type C:\ProgramData\Jenkins\.jenkins\secrets in the address bar, and type the password in the browser
+-click on install suggested plugins
+-------------------------------------------------------------
+Step 1:
+-new item (github-freestyle-job)
+4. Select Freestyle project.
+5. Click OK.
+------->
+Step 2: Configure Source Code Management
+On the configuration page:
+
+1. Scroll to Source Code Management.
+2. Select Git.
+3. In Repository URL, enter this public GitHub repository:
+
+https://github.com/octocat/Hello-World.git
+
+Don't click Save yet.
+------->
+Step 3: Configure Build Steps
+
+1. Scroll down to the Build Steps section.
+2. Click Add build step.
+3. Select Execute Windows batch command (because Jenkins is installed directly on Windows).
+
+Enter these commands:
+
+```
+echo Jenkins Job Started
+echo Source code fetched from GitHub
+dir
+```
+------->
+### Step 4: Save
+
+Click Save at the bottom.
+
+After saving, tell me when you reach the job dashboard. We'll run the job using Build Now and inspect the output.
+--------->
+### Step 5: Build the Job
+
+1. Open the github-freestyle-job dashboard.
+2. On the left side, click Build Now.
+3. Wait a few seconds.
+4. Check Build History on the left/bottom side.
+
+You should see a build number such as #1.
+-------->
+### Step 6: View Console Output
+
+1. Click the build number #1.
+2. Click Console Output.
+
+You should see output similar to:
+
+Started by user
+Building in workspace
+Jenkins Job Started
+Source code fetched from GitHub
+[repository file listing]
+Finished: SUCCESS

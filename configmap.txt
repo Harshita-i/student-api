@@ -1,0 +1,73 @@
+
+Step 1: Create a ConfigMap
+kubectl create configmap my-config --from-literal=APP_COLOR=blue
+
+
+Step 2: View ConfigMap
+kubectl get configmaps
+
+
+Step 3: Display ConfigMap details
+kubectl describe configmap my-config
+
+
+Step 4: Create a Deployment
+
+Create deployment.yaml:
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: config-deployment
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: config-app
+
+  template:
+    metadata:
+      labels:
+        app: config-app
+
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+
+        env:
+        - name: APP_COLOR
+          valueFrom:
+            configMapKeyRef:
+              name: my-config
+              key: APP_COLOR
+
+
+Step 5: Apply deployment
+kubectl apply -f deployment.yaml
+
+
+Step 6: Check environment variable
+
+First, find the Pod:
+kubectl get pods
+
+
+Then:
+kubectl exec -it POD_NAME -- printenv APP_COLOR
+
+
+Output:
+blue
+
+
+Replace POD_NAME with the actual Pod name.
+
+Step 7: Delete resources
+kubectl delete deployment config-deployment
+kubectl delete configmap my-config
+
+
+Result: Successfully created a ConfigMap and used it to manage application configuration.

@@ -1,0 +1,520 @@
+
+
+# Step 1: Start Docker Desktop and Kubernetes
+
+1. Open Docker Desktop.
+2. Wait until Docker Engine is running.
+3. Go to Settings → Kubernetes.
+4. Enable Kubernetes if it is not already enabled.
+5. Apply changes and wait until the cluster starts.
+
+Open CMD and execute:
+
+```
+kubectl get nodes
+```
+
+Expected output:
+
+```
+NAME             STATUS
+docker-desktop   Ready
+```
+
+If the status is `Ready`, your Kubernetes cluster is working.
+
+Also check your current context:
+
+```
+kubectl config current-context
+```
+
+It should normally show:
+
+```
+docker-desktop
+```
+
+# Step 2: Create the GitHub repository
+
+1. Open [GitHub]
+2. Log in to your account.
+3. Click the `+` icon → New repository.
+4. Enter repository name:
+
+```
+gitops-demo
+```
+
+5. Select Public (simplest for this experiment).
+6. Do not initialize with a README.
+7. Click Create repository.
+
+Your repository is now created.
+
+# Step 3: Create the project in VS Code
+
+Open CMD and execute:
+
+```
+mkdir gitops-demo
+cd gitops-demo
+code .
+```
+
+This opens the project folder in VS Code.
+
+Create a folder named:
+
+```
+kubernetes
+```
+
+Inside the `kubernetes` folder, create two files:
+
+- `deployment.yaml`
+- `service.yaml`
+
+Your final structure should be:
+
+```
+gitops-demo/
+│
+└── kubernetes/
+    ├── deployment.yaml
+    └── service.yaml
+```
+
+## Step 4: Write deployment.yaml
+
+Open `deployment.yaml` and paste:
+
+```
+
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: nginx-app
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: nginx
+
+  template:
+    metadata:
+      labels:
+        app: nginx
+
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:alpine
+          ports:
+            - containerPort: 80
+
+```
+
+What does this do?
+
+- Creates a Deployment named `nginx-app`.
+- Creates 2 Nginx Pods.
+- Uses the `nginx:alpine` Docker image.
+- Runs the application on container port 80.
+
+## Step 5: Write service.yaml
+
+Open `service.yaml` and paste:
+
+```
+
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: nginx-service
+
+spec:
+  type: NodePort
+
+  selector:
+    app: nginx
+
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30080
+
+```
+
+What does this do?
+
+- Creates a Service named `nginx-service`.
+- Selects Pods having the label `app: nginx`.
+- Exposes the application using NodePort `30080`.
+
+Save both files.
+
+## Step 6: Push the project to GitHub
+
+Open the VS Code terminal.
+
+Make sure you are inside the `gitops-demo` folder.
+
+Execute these commands one by one:
+
+1\. Initialize Git
+
+```
+git init
+```
+
+Initializes Git in your project folder.
+
+2\. Add files
+
+```
+git add .
+```
+
+Adds all project files to Git.
+
+3\. Commit files
+
+```
+git commit -m "Add Kubernetes manifests"
+```
+
+Saves the changes in Git.
+
+4\. Set branch name
+
+```
+git branch -M main
+```
+
+Names your branch `main`.
+
+5\. Connect GitHub repository
+
+Replace `YOUR_USERNAME` with your actual GitHub username.
+
+```
+git remote add origin https://github.com/YOUR_USERNAME/gitops-demo.git
+```
+
+6\. Push files
+
+```
+git push -u origin main
+```
+
+Now open your GitHub repository and refresh it.
+
+You should see:
+
+```
+gitops-demo/
+    kubernetes/
+        deployment.yaml
+        service.yaml
+```
+
+Files uploaded to GitHub
+
+## Step 7: Install Argo CD in Kubernetes
+
+Now we install Argo CD inside our Kubernetes cluster.
+
+Open a separate CMD or VS Code terminal.
+
+1\. Create Argo CD namespace
+
+```
+kubectl create namespace argocd
+```
+
+This creates a separate namespace called `argocd` to hold Argo CD components.
+
+2\. Install Argo CD
+
+```
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+```
+
+This downloads and installs the Argo CD components in Kubernetes.
+
+3\. Check Argo CD Pods
+
+```
+kubectl get pods -n argocd
+```
+
+Initially, some Pods might show `ContainerCreating` or `Pending`.
+
+Wait until the required Pods show `Running` and their containers are ready.
+
+You can continuously monitor them using:
+
+```
+kubectl get pods -n argocd -w
+```
+
+Press `Ctrl + C` when you finish monitoring.
+
+[ArgoCD Installation: Non-HA vs HA + Deploying Your First App | by Pooja Daga | ArgoCD Insights | Medium](https://images.openai.com/static-rsc-4/Ag2CZqZGo5SsbAWykvOVAh-q9tIh_Lcg7Bex46eVps71zjBkVlL14nu9dS3dhjdPdIQ1ruA4lsdviMhAXZtotw5fLYuok8UJu70UaoUtRrluqJI02r9Yc9_LZjr1M6c6Trc-C_MbK0wpDO0BZpI7hN3baGwKQpx-GfEfWzgUrbU?purpose=inline)
+
+[medium.com](https://medium.com/argocd-insights/argocd-installation-non-ha-vs-ha-deploying-your-first-app-b789f79e964f?utm_source=chatgpt.com)
+
+## Step 8: Access the Argo CD dashboard
+
+We need to access Argo CD through a browser.
+
+1\. Forward the port
+
+Execute:
+
+```
+kubectl port-forward svc/argocd-server -n argocd 8080:443
+```
+
+Keep this terminal open. Do not close it while accessing the dashboard.
+
+2\. Open the browser
+
+Visit:
+
+[https://localhost:8080](https://localhost:8080?utm_source=chatgpt.com)
+
+You may see a browser security warning because Argo CD uses a self-signed certificate by default. For your local lab, proceed to the site.
+
+[GitOps with the InterSystems Kubernetes Operator | InterSystems DC](https://images.openai.com/static-rsc-4/ytB8o5xZe7dJ5gJUvf6be3Wjc4p85nS8pZ-zdqMGMl_HyvPY35fS3wcHVzcVwyGJ7OcbHt63ockdfZMhytr0ZSjbJcFRXachaDKat-s2rSn0NCiPBLbalrPNv8-06BzxA80cJoZROTZAvoLd8Vi3Flact4CUV0_NqRuO6C-LHm4?purpose=inline)
+
+[community.intersystems.com](https://community.intersystems.com/post/gitops-intersystems-kubernetes-operator?utm_source=chatgpt.com)
+
+3\. Get the admin password
+
+Open another CMD terminal and execute:
+
+```
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}"
+```
+
+This displays the encoded password.
+
+For Windows PowerShell, to decode it directly, execute:
+
+```
+[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String((kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}")))
+```
+
+Copy the decoded password.
+
+4\. Login
+
+- Username: `admin`
+- Password: Decoded password from the previous command.
+
+Now you should be able to access the Argo CD dashboard.
+
+## Step 9: Create the Argo CD application file
+
+Go back to VS Code.
+
+Inside the main `gitops-demo` folder, create a new file:
+
+```
+argocd-app.yaml
+```
+
+Your project structure should now look like:
+
+```
+gitops-demo/
+│
+├── kubernetes/
+│   ├── deployment.yaml
+│   └── service.yaml
+│
+└── argocd-app.yaml
+```
+
+Paste this code into `argocd-app.yaml`:
+
+```
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+
+metadata:
+  name: student-app
+  namespace: argocd
+
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/YOUR_USERNAME/gitops-demo.git
+    targetRevision: main
+    path: kubernetes
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+```
+
+Important: Replace `YOUR_USERNAME` with your GitHub username.
+
+For example:
+
+```
+repoURL: https://github.com/harshita/gitops-demo.git
+```
+
+
+Notice that `argocd-app.yaml` is created in your local project folder. It does not have to be uploaded to GitHub for this experiment.
+
+## Step 10: Deploy using Argo CD
+
+Open CMD in the main `gitops-demo` folder.
+
+Execute:
+
+```
+kubectl apply -f argocd-app.yaml
+```
+
+Purpose: Creates the Argo CD Application.
+
+Argo CD now knows:
+
+- Which GitHub repository to monitor.
+- Which branch to monitor.
+- Which folder contains Kubernetes configuration files.
+- Where to deploy the application.
+
+Now check:
+
+```
+kubectl get applications -n argocd
+```
+
+Expected output after synchronization:
+
+```
+NAME          SYNC STATUS   HEALTH STATUS
+student-app   Synced        Healthy
+```
+
+You can also check the created Kubernetes resources:
+
+```
+kubectl get deployments
+```
+
+```
+kubectl get pods
+```
+
+```
+kubectl get services
+```
+
+You should see:
+
+- Deployment: `nginx-app`
+- Two Nginx Pods
+- Service: `nginx-service`
+
+Open the application:
+
+[http://localhost:30080]
+You should see the Nginx welcome page.
+
+## Step 11: Demonstrate GitOps (Most important step)
+
+Now we demonstrate how Argo CD automatically detects changes in GitHub.
+
+Initially, your `deployment.yaml` contains:
+
+```
+replicas: 2
+```
+
+We are going to change it to:
+
+```
+replicas: 3
+```
+
+1\. Open `deployment.yaml` in VS Code.
+
+Change:
+
+```
+replicas: 2
+```
+
+to:
+
+```
+replicas: 3
+```
+
+Save the file.
+
+2\. Push the changes to GitHub.
+
+Open the terminal in the main project folder and execute:
+
+```
+git add .
+```
+
+```
+git commit -m "Update replica count"
+```
+
+```
+git push
+```
+
+3\. What happens now?
+
+- GitHub receives the updated file.
+- Argo CD detects the change in the GitHub repository.
+- Argo CD automatically synchronizes the updated configuration.
+- Kubernetes increases the number of Nginx Pods from 2 to 3.
+
+4\. Verify the changes
+
+Execute:
+
+```
+kubectl get deployments
+```
+
+Expected output:
+
+```
+NAME        READY
+nginx-app   3/3
+```
+
+Also check:
+
+```
+kubectl get pods
+```
+
+You should see three Nginx Pods.
+

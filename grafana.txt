@@ -1,0 +1,65 @@
+1. Grafana – Monitoring and Visualization
+Aim: To deploy Grafana using Docker and visualize application/system monitoring data through a dashboard.
+Step 1: Run Grafana using Docker
+Open PowerShell and execute:
+docker run -d --name grafana -p 3000:3000 grafana/grafana
+
+
+This downloads the Grafana image and starts a container.
+
+Check the container:
+docker ps
+
+
+Step 2: Open Grafana
+Open your browser:
+
+http://localhost:3000
+
+Login credentials:
+- Username: admin
+- Password: admin
+Grafana may ask you to change the password after login.
+
+
+Step 3: Create a dashboard
+For a simple demonstration, use Grafana's built-in dashboard features.
+1. Click Dashboards.
+2. Select New → New Dashboard.
+
+Step 4: Run Prometheus
+Start Prometheus using Docker:
+docker run -d --name prometheus -p 9090:9090 prom/prometheus
+
+
+Prometheus provides monitoring data that Grafana can visualize.
+
+Open:
+
+http://localhost:9090
+
+In Grafana:
+1. Go to Connections → Data sources.
+2. Click Add data source.
+3. Select Prometheus.
+4. Enter the URL:
+http://host.docker.internal:9090
+
+
+5. Click Save & test.
+
+Step 1: Click Configure visualization
+Click the blue Configure visualization button in the centre of your screen.
+Step 2: Select Prometheus data source
+The visualization editor will open.
+1. Look for the Data source dropdown near the top of the editor.
+2. Click it.
+3. Select Prometheus.
+Step 2: In the query editor, click Code (beside Builder), if available.
+
+Step 3: Clear the query in promQL and enter:
+up
+
+
+Step 4: Click Run queries.
+and save

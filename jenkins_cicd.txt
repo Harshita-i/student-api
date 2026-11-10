@@ -1,0 +1,58 @@
+Experiment 2 – Jenkins CI/CD Pipeline using the Jenkins installation we just completed.
+
+### Step 1: Create a new Pipeline job
+
+1. Open Jenkins Dashboard: `http://localhost:8080`
+2. Click New Item.
+3. Enter the name:
+
+`My-Pipeline`
+
+4. Select Pipeline (not Freestyle project).
+5. Click OK.
+
+
+### Step 2: Configure the Pipeline
+
+1. Scroll down to the Pipeline section.
+2. Under Definition, select Pipeline script.
+3. In the Script text area, paste:
+
+```
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Building application'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Testing application'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Deploying application'
+            }
+        }
+    }
+}
+```
+
+4\. Click Save.
+
+This pipeline has three stages: Build, Test, and Deploy. Each stage prints a message.
+
+Step 3: Build the Pipeline
+1. After saving, you'll reach the My-Pipeline job dashboard.
+2. Click Build Now on the left side.
+3. Wait for the build to complete.
+4. Check Build History. You should see build #1.
+Step 4: Check Console Output
+1. Click build #1.
+2. Select Console Output.

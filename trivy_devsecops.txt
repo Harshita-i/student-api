@@ -1,0 +1,153 @@
+# Experiment 1: Use Trivy to analyze security issues in a Docker image
+
+
+### Step 1: Build your Docker image
+
+Open PowerShell in your Flask project folder:
+
+```
+cd C:\23071A0583\flask-cicd
+```
+
+Build the image:
+
+```
+docker build -t flask-cicd .
+```
+
+Verify:
+
+```
+docker images
+```
+
+You should see `flask-cicd`.
+
+### Step 2: Scan the Docker image using Trivy
+
+We can run Trivy through Docker itself, so you don't need to install Trivy separately on Windows.
+
+First, download the Trivy scanner image:
+
+```
+docker pull aquasec/trivy:latest
+```
+
+Next, save your Flask image as a TAR file:
+
+```
+docker save -o flask-cicd.tar flask-cicd
+```
+
+Now scan that image:
+
+```
+docker run --rm -v "${PWD}:/work" aquasec/trivy:latest image --input /work/flask-cicd.tar
+```
+
+This scans the saved image for known vulnerabilities.
+
+### Step 3: Understand the Trivy report
+
+You can also save the report:
+
+```
+docker run --rm -v "${PWD}:/work" aquasec/trivy:latest image --input /work/flask-cicd.tar --format table > trivy-report.txt
+```
+
+---------------------
+
+
+# Experiment 2: Use DevSecOps to identify and fix two security issues in source code
+
+
+We will use Bandit because it is easy to execute with Python.
+
+## Step 1: Create a vulnerable Python source file
+
+Inside your `flask-cicd` folder, create a file named:
+
+`app_insecure.py`
+
+Paste this code:
+
+```
+from flask import Flask
+
+app = Flask(__name__)
+
+# Security Issue 1: Hardcoded secret key
+app.secret_key = "mysecret123"
+
+@app.route("/")
+def home():
+    return "Welcome to Flask Application"
+
+if __name__ == "__main__":
+
+    # Security Issue 2: Debug mode enabled
+    app.run(host="0.0.0.0", port=5000, debug=True)
+```
+
+This application contains two intentional security issues.
+
+## Step 2: Install Bandit
+
+Open the VS Code terminal and run:
+
+```
+pip install bandit
+```
+
+Bandit is a Python security analysis tool that checks source code for common security problems.
+
+## Step 3: Scan the source code
+
+Run:
+
+```
+bandit app_insecure.py
+```
+
+Bandit should identify the hardcoded secret and the use of Flask debug mode.
+
+## Step 4: Understand the two prominent security issues
+
+
+## Step 5: How to recover (fix) these issues
+
+Create another file named `app_secure.py`.
+
+Replace the insecure code with:
+
+```
+import os
+from flask import Flask
+
+app = Flask(__name__)
+
+# Fixed Issue 1: Read secret from environment variable
+app.secret_key = os.environ.get("FLASK_SECRET_KEY")
+
+@app.route("/")
+def home():
+    return "Welcome to Flask Application"
+
+if __name__ == "__main__":
+
+    # Fixed Issue 2: Disable debug mode
+    app.run(host="0.0.0.0", port=5000, debug=False)
+```
+
+For local testing, set the secret in PowerShell without putting it in your source code:
+$env:FLASK_SECRET_KEY="your-long-random-secret"
+
+
+## Step 6: Scan the corrected code
+
+Run:
+
+```
+bandit app_secure.py
+```
+

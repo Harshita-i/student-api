@@ -1,0 +1,209 @@
+Objective: Create a Python Flask application and configure a CI/CD pipeline to install dependencies, run tests, and build a Docker image automatically whenever code is pushed to GitHub.
+Step 1: Create a project folder
+Open VS Code terminal (PowerShell):
+mkdir flask-cicd
+cd flask-cicd
+
+
+
+
+Step 2: Create the Flask application
+Create a file named app.py.
+
+Add this code:
+
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return "Hello! Flask CI/CD Pipeline is Working."
+
+@app.route("/health")
+def health():
+    return {"status": "healthy"}
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
+
+
+
+This application contains two endpoints:
+- / – Displays a welcome message.
+- /health – Returns the application health status.
+Step 3: Create requirements.txt
+Create a file named requirements.txt.
+Flask
+pytest
+
+
+These are the dependencies required:
+- Flask – To develop the web application.
+- Pytest – To execute automated tests.
+
+
+Step 4: Create test cases
+Create a file named test_app.py.
+
+
+
+from app import app
+
+def test_home():
+    client = app.test_client()
+    response = client.get("/")
+    assert response.status_code == 200
+    assert b"Flask CI/CD Pipeline is Working" in response.data
+
+def test_health():
+    client = app.test_client()
+    response = client.get("/health")
+    assert response.status_code == 200
+    assert response.json["status"] == "healthy"
+
+
+
+These tests verify that both application endpoints work correctly.
+Step 5: Test the application locally
+Run these commands in PowerShell:
+python -m venv venv
+
+
+Activate the virtual environment:
+.\venv\Scripts\Activate.ps1
+
+
+Install dependencies:
+pip install -r requirements.txt
+
+
+Run tests:
+pytest -v
+
+
+Expected result
+test_app.py::test_home PASSED
+test_app.py::test_health PASSED
+
+2 passed
+
+
+Step 6: Create a Dockerfile
+Create a file named Dockerfile (without any extension).
+
+Add:
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY app.py .
+
+EXPOSE 5000
+
+CMD ["python", "app.py"]
+
+
+Step 7: Create a GitHub repository
+1. Open GitHub.
+2. Create a new repository named flask-cicd.
+3. Keep it Public or Private.
+4. Create the repository.
+In your VS Code terminal, run:
+git init
+git add .
+git commit -m "Initial Flask application"
+git branch -M main
+git remote add origin YOUR_GITHUB_REPOSITORY_URL
+git push -u origin main
+
+
+Step 8: Configure GitHub Actions CI/CD pipeline
+This is the most important step!
+
+Inside your project, create the following folder structure:
+flask-cicd/
+│
+├── .github/
+│   └── workflows/
+│       └── ci-cd.yml
+│
+├── app.py
+├── test_app.py
+├── requirements.txt
+└── Dockerfile
+
+
+Create ci-cd.yml inside .github/workflows/.
+
+Add the following code:
+name: Flask CI-CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run Tests
+        run: |
+          pytest -v
+
+      - name: Build Docker Image
+        run: |
+          docker build -t flask-cicd:latest .
+
+
+Step 9: Push the pipeline configuration to GitHub
+Run:
+git add .
+git commit -m "Add GitHub Actions CI-CD pipeline"
+git push origin main
+
+
+As soon as you push the changes, GitHub Actions automatically starts executing the pipeline.
+Step 10: Verify the pipeline
+1. Open your GitHub repository.
+2. Click the Actions tab.
+3. Select Flask CI-CD Pipeline.
+4. Open the latest workflow execution.
+
+
+
+
+Optional: Run the Docker container locally
+After building the image locally, run:
+docker build -t flask-cicd .
+
+
+Start the container:
+docker run -d --name flask-container -p 5000:5000 flask-cicd
+
+
+Open your browser:
+- http://localhost:5000/
+- http://localhost:5000/health
+To stop and remove the container:
+docker stop flask-container
+docker rm flask-container

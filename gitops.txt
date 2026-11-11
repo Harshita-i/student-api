@@ -118,12 +118,6 @@ spec:
 
 ```
 
-What does this do?
-
-- Creates a Deployment named `nginx-app`.
-- Creates 2 Nginx Pods.
-- Uses the `nginx:alpine` Docker image.
-- Runs the application on container port 80.
 
 ## Step 5: Write service.yaml
 
@@ -150,13 +144,6 @@ spec:
 
 ```
 
-What does this do?
-
-- Creates a Service named `nginx-service`.
-- Selects Pods having the label `app: nginx`.
-- Exposes the application using NodePort `30080`.
-
-Save both files.
 
 ## Step 6: Push the project to GitHub
 
@@ -253,21 +240,7 @@ This downloads and installs the Argo CD components in Kubernetes.
 kubectl get pods -n argocd
 ```
 
-Initially, some Pods might show `ContainerCreating` or `Pending`.
 
-Wait until the required Pods show `Running` and their containers are ready.
-
-You can continuously monitor them using:
-
-```
-kubectl get pods -n argocd -w
-```
-
-Press `Ctrl + C` when you finish monitoring.
-
-[ArgoCD Installation: Non-HA vs HA + Deploying Your First App | by Pooja Daga | ArgoCD Insights | Medium](https://images.openai.com/static-rsc-4/Ag2CZqZGo5SsbAWykvOVAh-q9tIh_Lcg7Bex46eVps71zjBkVlL14nu9dS3dhjdPdIQ1ruA4lsdviMhAXZtotw5fLYuok8UJu70UaoUtRrluqJI02r9Yc9_LZjr1M6c6Trc-C_MbK0wpDO0BZpI7hN3baGwKQpx-GfEfWzgUrbU?purpose=inline)
-
-[medium.com](https://medium.com/argocd-insights/argocd-installation-non-ha-vs-ha-deploying-your-first-app-b789f79e964f?utm_source=chatgpt.com)
 
 ## Step 8: Access the Argo CD dashboard
 
@@ -287,13 +260,10 @@ Keep this terminal open. Do not close it while accessing the dashboard.
 
 Visit:
 
-[https://localhost:8080](https://localhost:8080?utm_source=chatgpt.com)
+[https://localhost:8080]
 
 You may see a browser security warning because Argo CD uses a self-signed certificate by default. For your local lab, proceed to the site.
 
-[GitOps with the InterSystems Kubernetes Operator | InterSystems DC](https://images.openai.com/static-rsc-4/ytB8o5xZe7dJ5gJUvf6be3Wjc4p85nS8pZ-zdqMGMl_HyvPY35fS3wcHVzcVwyGJ7OcbHt63ockdfZMhytr0ZSjbJcFRXachaDKat-s2rSn0NCiPBLbalrPNv8-06BzxA80cJoZROTZAvoLd8Vi3Flact4CUV0_NqRuO6C-LHm4?purpose=inline)
-
-[community.intersystems.com](https://community.intersystems.com/post/gitops-intersystems-kubernetes-operator?utm_source=chatgpt.com)
 
 3\. Get the admin password
 
